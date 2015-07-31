@@ -111,9 +111,12 @@ release:
 
 docker: release
 	@docker build -t {{.Product}} .
-	@echo Container built. Run with: docker run -p 80:6060 {{.Product}}
+	@echo Container <{{.Product}}> built. Run with: make docker-run
 
-.PHONY: heroku build test setup release docker
+docker-run:
+	docker run -p 80:6060 {{.Product}}
+
+.PHONY: heroku build test setup release docker docker-run
 `
 
 const TEMPL_DOCKER = `
