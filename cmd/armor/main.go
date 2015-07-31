@@ -82,10 +82,15 @@ default:
 	@godep go build
 	@ls -ltrh
 
-setup:
-	@echo Installing build tooling...
-	go get github.com/laher/goxc
+setup: goxc.ok
+	@echo Installing dependency management tools...
 	go get github.com/tools/godep
+
+goxc.ok:
+	@echo Installing crossbuild tooling. This will take a while...
+	go get github.com/laher/goxc
+	goxc -t
+	touch goxc.ok
 
 heroku:
 	@echo Bootstrapping with godep
@@ -102,7 +107,7 @@ test:
 
 release:
 	godep save
-	goxc -env GOPATH=Godeps/_workspace:$GOPATH -bc="linux,amd64" -d . xc # we only use basic xc for now, see github.com/laher/goxc for more
+	goxc -env GOPATH=` + "`godep path`" + ` -bc="linux,amd64" -d . xc # we only use basic xc for now, see github.com/laher/goxc for more
 
 docker: release
 	@docker build -t {{.Product}} .
