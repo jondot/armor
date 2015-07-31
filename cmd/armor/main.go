@@ -111,7 +111,7 @@ release:
 
 docker: release
 	@docker build -t {{.Product}} .
-	@echo Container <{{.Product}}> built. Run with: make docker-run
+	@echo Container [{{.Product}}] built. Run with: make docker-run
 
 docker-run:
 	docker run -p 80:6060 {{.Product}}
