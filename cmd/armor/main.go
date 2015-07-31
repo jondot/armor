@@ -39,6 +39,7 @@ func main() {
 					createWithTemplate(TEMPL_SERVICE, "main.go", b)
 					createWithTemplate(TEMPL_PROCFILE, "Procfile", b)
 					createWithTemplate(TEMPL_MAKE, "Makefile", b)
+					createWithTemplate(TEMPL_DOCKER, "Dockerfile", b)
 
 					fmt.Print(shellExec("git", "init"))
 					fmt.Print(shellExec("git", "add", "-A"))
@@ -103,9 +104,20 @@ release:
 	godep save
 	goxc -env GOPATH=Godeps/_workspace:$GOPATH -bc="linux,amd64" -d . xc # we only use basic xc for now, see github.com/laher/goxc for more
 
-.PHONY: heroku build test setup
+docker: release
+	@docker build -t {{.Product}} .
+	@echo Container built. Run with: docker run -p 80:6060 {{.Product}}
+
+.PHONY: heroku build test setup release docker
 `
 
+const TEMPL_DOCKER = `
+FROM scratch
+COPY ./config /
+COPY ./snapshot/linux_amd64/* /
+EXPOSE 6060
+CMD ["/{{.Product}}"]
+`
 const TEMPL_PROCFILE = `web: {{.Product}}
 `
 const TEMPL_SERVICE = `
