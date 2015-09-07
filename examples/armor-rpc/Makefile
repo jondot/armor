@@ -1,6 +1,6 @@
 
 heroku:
-	@echo Bootstrapping with godep (Heroku needs this)...
+	@echo Bootstrapping with godep for heroku
 	@go get github.com/tools/godep
 	@godep save
 	@git add -A .

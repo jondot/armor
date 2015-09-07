@@ -102,10 +102,6 @@ type callInfo struct {
 	traceInfo traceInfo // in trace.go
 }
 
-// EnableTracing controls whether to trace RPCs using the golang.org/x/net/trace package.
-// This should only be set before any RPCs are sent or received by this program.
-var EnableTracing = true
-
 // Invoke is called by the generated code. It sends the RPC request on the
 // wire and returns after response is received.
 func Invoke(ctx context.Context, method string, args, reply interface{}, cc *ClientConn, opts ...CallOption) (err error) {
@@ -122,7 +118,7 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, cc *Cli
 	}()
 
 	if EnableTracing {
-		c.traceInfo.tr = trace.New("Sent."+methodFamily(method), method)
+		c.traceInfo.tr = trace.New("grpc.Sent."+methodFamily(method), method)
 		defer c.traceInfo.tr.Finish()
 		c.traceInfo.firstLine.client = true
 		if deadline, ok := ctx.Deadline(); ok {
@@ -137,7 +133,6 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, cc *Cli
 			}
 		}()
 	}
-
 	callHdr := &transport.CallHdr{
 		Host:   cc.authority,
 		Method: method,
@@ -168,8 +163,8 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, cc *Cli
 			}
 			return toRPCErr(err)
 		}
-		if EnableTracing {
-			c.traceInfo.tr.LazyLog(payload{args}, true)
+		if c.traceInfo.tr != nil {
+			c.traceInfo.tr.LazyLog(&payload{sent: true, msg: args}, true)
 		}
 		stream, err = sendRequest(ctx, cc.dopts.codec, callHdr, t, args, topts)
 		if err != nil {
@@ -187,8 +182,8 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, cc *Cli
 		if _, ok := lastErr.(transport.ConnectionError); ok {
 			continue
 		}
-		if EnableTracing {
-			c.traceInfo.tr.LazyLog(payload{reply}, true)
+		if c.traceInfo.tr != nil {
+			c.traceInfo.tr.LazyLog(&payload{sent: false, msg: reply}, true)
 		}
 		t.CloseStream(stream, lastErr)
 		if lastErr != nil {

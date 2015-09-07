@@ -33,7 +33,7 @@ func (m *Armor) GetMiddleware(name string) gin.HandlerFunc {
 	case "request_tracing":
 		return middleware.GinRequestTracing(m.Log.Logger, time.RFC3339)
 	case "route_metrics":
-		return middleware.GinRouteMetrics(m.Metrics.sink, m.Config.Environment, m.Config.Product, m.Config.Hostname)
+		return middleware.GinRouteMetrics(m.Metrics.sink, m.Metrics.Prefix, m.Config.Product, m.Config.Hostname)
 	}
 	return nil
 }
