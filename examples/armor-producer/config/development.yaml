@@ -1,6 +1,4 @@
-foo:
-  bar: 1
-  baz: qux
+
 middleware:
   - request_identification
 
@@ -8,10 +6,6 @@ log:
   console:
     level: info
     format: text
-  syslog:
-    transport: udp
-    server: localhost:514
-    level: debug
 metrics:
   prefix: dev
   inmem:

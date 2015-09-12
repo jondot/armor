@@ -23,6 +23,14 @@ const ContentType = "text/event-stream"
 var contentType = []string{ContentType}
 var noCache = []string{"no-cache"}
 
+var fieldReplacer = strings.NewReplacer(
+	"\n", "\\n",
+	"\r", "\\r")
+
+var dataReplacer = strings.NewReplacer(
+	"\n", "\ndata:",
+	"\r", "\\r")
+
 type Event struct {
 	Event string
 	Id    string
@@ -40,30 +48,30 @@ func Encode(writer io.Writer, event Event) error {
 
 func writeId(w stringWriter, id string) {
 	if len(id) > 0 {
-		w.WriteString("id: ")
-		w.WriteString(escape(id))
+		w.WriteString("id:")
+		fieldReplacer.WriteString(w, id)
 		w.WriteString("\n")
 	}
 }
 
 func writeEvent(w stringWriter, event string) {
 	if len(event) > 0 {
-		w.WriteString("event: ")
-		w.WriteString(escape(event))
+		w.WriteString("event:")
+		fieldReplacer.WriteString(w, event)
 		w.WriteString("\n")
 	}
 }
 
 func writeRetry(w stringWriter, retry uint) {
 	if retry > 0 {
-		w.WriteString("retry: ")
+		w.WriteString("retry:")
 		w.WriteString(strconv.FormatUint(uint64(retry), 10))
 		w.WriteString("\n")
 	}
 }
 
 func writeData(w stringWriter, data interface{}) error {
-	w.WriteString("data: ")
+	w.WriteString("data:")
 	switch kindOfData(data) {
 	case reflect.Struct, reflect.Slice, reflect.Map:
 		err := json.NewEncoder(w).Encode(data)
@@ -72,14 +80,13 @@ func writeData(w stringWriter, data interface{}) error {
 		}
 		w.WriteString("\n")
 	default:
-		text := fmt.Sprint(data)
-		w.WriteString(escape(text))
+		dataReplacer.WriteString(w, fmt.Sprint(data))
 		w.WriteString("\n\n")
 	}
 	return nil
 }
 
-func (r Event) Write(w http.ResponseWriter) error {
+func (r Event) Render(w http.ResponseWriter) error {
 	header := w.Header()
 	header["Content-Type"] = contentType
 
@@ -96,12 +103,4 @@ func kindOfData(data interface{}) reflect.Kind {
 		valueType = value.Elem().Kind()
 	}
 	return valueType
-}
-
-func escape(str string) string {
-	// any-char		= %x0000-0009 / %x000B-000C / %x000E-10FFFF
-	// ; a Unicode character other than U+000A LINE FEED (LF) or U+000D CARRIAGE RETURN (CR)
-	str = strings.Replace(str, "\n", "\\n", -1)
-	str = strings.Replace(str, "\r", "\\r", -1)
-	return str
 }

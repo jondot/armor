@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/jondot/armor",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/BurntSushi/toml",
@@ -25,6 +28,11 @@
 			"Rev": "f8202bc903bda493ebba4aa54922d78430c2c42f"
 		},
 		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-143-ga65b733",
+			"Rev": "a65b733b303f0055f8d324d805f393cd3e7a7904"
+		},
+		{
 			"ImportPath": "github.com/coreos/go-etcd/etcd",
 			"Comment": "v2.0.0-7-g73a8ef7",
 			"Rev": "73a8ef737e8ea002281a28b4cb92a1de121ad4c6"
@@ -37,6 +45,10 @@
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
 			"Rev": "efd7476481382c195beb33acd8ec2f1527167fb4"
+		},
+		{
+			"ImportPath": "github.com/grpc/grpc-common/go/helloworld",
+			"Rev": "29a6919f85b768b14172944b95e7af1d1f3cc7cf"
 		},
 		{
 			"ImportPath": "github.com/jondot/viper",
@@ -58,7 +70,7 @@
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",
-			"Rev": "404710eaa45fcb6ac1731ce1808110e18594c3c4"
+			"Rev": "fe6ea2c8e398672518ef204bf0fbd9af858d0e15"
 		},
 		{
 			"ImportPath": "github.com/mattn/go-colorable",
@@ -85,8 +97,13 @@
 			"Rev": "b91b2a94780f4e6b4d3b0c12fd9b5f4b05b1aa45"
 		},
 		{
-			"ImportPath": "github.com/ugorji/go/codec",
-			"Rev": "821cda7e48749cacf7cad2c6ed01e96457ca7e9d"
+			"ImportPath": "github.com/streadway/amqp",
+			"Rev": "6a378341a305bfbc252e8a6638f16cf443221997"
+		},
+		{
+			"ImportPath": "github.com/tj/go-debug",
+			"Comment": "v2.0.0",
+			"Rev": "ff4a55a20a86994118644bbddc6a216da193cc13"
 		},
 		{
 			"ImportPath": "github.com/xordataexchange/crypt/backend",
@@ -124,18 +141,6 @@
 			"Rev": "d375fa34084fb5703fbe4ee98e64108f3d2235ca"
 		},
 		{
-			"ImportPath": "golang.org/x/oauth2",
-			"Rev": "b5adcc2dcdf009d0391547edc6ecbaff889f5bb9"
-		},
-		{
-			"ImportPath": "google.golang.org/cloud/compute/metadata",
-			"Rev": "a83e10ff0ef07ab3dfe24c952d9544279514dec2"
-		},
-		{
-			"ImportPath": "google.golang.org/cloud/internal",
-			"Rev": "a83e10ff0ef07ab3dfe24c952d9544279514dec2"
-		},
-		{
 			"ImportPath": "google.golang.org/grpc",
 			"Rev": "6b6127d8c67b67f9f8509b84279eac053964e868"
 		},
@@ -143,6 +148,11 @@
 			"ImportPath": "gopkg.in/bluesuncorp/validator.v5",
 			"Comment": "v5.5.1",
 			"Rev": "1d61bf31487322f9bffa4d9f1eda4a53175b58dd"
+		},
+		{
+			"ImportPath": "gopkg.in/h2non/bimg.v0",
+			"Comment": "0.1.14-2-gb6bc20d",
+			"Rev": "b6bc20df55d52da35faae05cb2fb688df7a5b1ff"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",

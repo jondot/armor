@@ -79,6 +79,7 @@ func shellExec(cmd string, args ...string) string {
 
 const TEMPL_MAKE = `
 default:
+	@godep save
 	@godep go build
 	@ls -ltrh
 
@@ -103,7 +104,7 @@ heroku:
 	@git push heroku master
 
 test:
-	go test
+	@godep go test
 
 bump:
 	@goxc bump

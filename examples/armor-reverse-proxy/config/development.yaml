@@ -1,45 +1,18 @@
 
-foo:
-  bar: 1
+middleware:
+    - request_identification
+    - request_tracing
+    - route_metrics
 
-
-
-
-#
-# Configure middleware.
-#
-
-#middleware:
-#  - request_identification
-#  - request_tracing
-#  - route_metrics
-
-
-
-
-#
-# Configure metrics, you can have metrics sent to multiple
-# sinks.
-#
-# See github.com/armon/go-metrics for types of sinks
-#
-
-#metrics:
-#  - inmem
-#  - statsd
-
-
-
-
-#
-# Configure your logging, along with hooks.
-#
+metrics:
+  prefix: dev
+  inmem:
+    interval_secs: 10
+    retain_mins: 1
 
 log:
-  level: info
-#  hooks:
-#    syslog:
-#      transport: udp
-#      server: localhost:514
-#      level: debug
+  console:
+    level: error
+
+
 

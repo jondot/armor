@@ -1,12 +1,12 @@
 
 default:
-	@go build
+	@godep go build
 	@ls -ltrh
 
 setup:
 	@echo Installing build tooling...
-	go get github.com/laher/goxc
 	go get github.com/tools/godep
+	go get github.com/laher/goxc
 
 heroku:
 	@echo Bootstrapping with godep
@@ -21,8 +21,18 @@ heroku:
 test:
 	go test
 
+bump:
+	@goxc bump
+
 release:
 	godep save
-	goxc -bc="linux,amd64" -d . xc # we only use basic xc for now, see github.com/laher/goxc for more
+	goxc -env GOPATH=`godep path` -bc="linux,amd64" -d . xc # we only use basic xc for now, see github.com/laher/goxc for more
 
-.PHONY: heroku build test setup
+docker: release
+	@docker build -t armor-bench .
+	@echo Container [armor-bench] built. Run with: make docker-run
+
+docker-run:
+	docker run -p 80:6060 armor-bench
+
+.PHONY: heroku build test setup release docker docker-run bump

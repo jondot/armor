@@ -1,46 +1,15 @@
 
-# ====================================================================
-# Your own config
-# ====================================================================
-foo:
-  bar: 1
-
-# ====================================================================
-# Various knobs
-# ====================================================================
-
-#shafile: REVISION
-#port: 6060
-#interface: 0.0.0.0
-
-# ====================================================================
-# Middleware
-# ====================================================================
 middleware:
     - request_identification
     - request_tracing
     - route_metrics
 
-# ====================================================================
-# Metrics
-# You can have metrics sent to multiple sinks.
-#
-# See github.com/armon/go-metrics for types of sinks
-# ====================================================================
+metrics:
+  prefix: dev
+  inmem:
+    interval_secs: 10
+    retain_mins: 1
 
-#metrics:
-#  - inmem
-#  - statsd
-
-# ====================================================================
-# Logging
-# Along with custom hooks
-# ====================================================================
 log:
   console:
     level: error
-#  hooks:
-#    syslog:
-#      transport: udp
-#      server: localhost:514
-#      level: debug

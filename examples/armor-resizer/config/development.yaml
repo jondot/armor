@@ -1,0 +1,15 @@
+
+middleware:
+    - request_identification
+    - request_tracing
+    - route_metrics
+
+metrics:
+  prefix: dev
+  inmem:
+    interval_secs: 10
+    retain_mins: 1
+
+log:
+  console:
+    level: error
