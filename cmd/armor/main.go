@@ -40,7 +40,7 @@ func main() {
 					createWithTemplate(TEMPL_PROCFILE, "Procfile", b)
 					createWithTemplate(TEMPL_MAKE, "Makefile", b)
 					createWithTemplate(TEMPL_DOCKER, "Dockerfile", b)
-
+					createWithTemplate(TEMPL_GITIGNORE, ".gitignore", b)
 
 					fmt.Print(shellExec("git", "init"))
 					fmt.Print(shellExec("git", "add", "-A"))
