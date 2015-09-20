@@ -5,8 +5,6 @@ import (
 	"github.com/codegangsta/cli"
 	"os"
 	"os/exec"
-	"github.com/kardianos/osext"
-	sh "github.com/termie/go-shutil"
 	"text/template"
 	"path"
 )
@@ -43,16 +41,6 @@ func main() {
 					createWithTemplate(TEMPL_PROCFILE, "Procfile", b)
 					createWithTemplate(TEMPL_MAKE, "Makefile", b)
 					createWithTemplate(TEMPL_DOCKER, "Dockerfile", b)
-
-					fmt.Printf("Copying dependencies...\n")
-					depdir, _ := osext.ExecutableFolder()
-					println(depdir)
-
-					err := sh.CopyTree(path.Join(depdir, "../src/github.com/jondot/armor/Godeps"), "Godeps", nil)
-					if err != nil {
-						fmt.Printf("Cannot copy dependencies: %s\n", err)
-						os.Exit(1)
-					}
 
 
 					fmt.Print(shellExec("git", "init"))
