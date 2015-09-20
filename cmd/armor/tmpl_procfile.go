@@ -1,2 +1,7 @@
-const TEMPL_PROCFILE = `web: {{.Product}}
+package main
+const TEMPL_PROCFILE = `web: {{.Product}}`
+
+
+
+
 

@@ -5,7 +5,10 @@ import (
 	"github.com/codegangsta/cli"
 	"os"
 	"os/exec"
+	"github.com/kardianos/osext"
+	sh "github.com/termie/go-shutil"
 	"text/template"
+	"path"
 )
 
 type bucket struct {
@@ -28,7 +31,7 @@ func main() {
 
 					os.MkdirAll(app, 0755)
 					if err := os.Chdir(app); err != nil {
-						fmt.Printf("Cannot change into directory: %s", app)
+						fmt.Printf("Cannot change into directory: %s\n", app)
 						os.Exit(1)
 					}
 					fmt.Printf("Created %s\n", app)
@@ -40,6 +43,17 @@ func main() {
 					createWithTemplate(TEMPL_PROCFILE, "Procfile", b)
 					createWithTemplate(TEMPL_MAKE, "Makefile", b)
 					createWithTemplate(TEMPL_DOCKER, "Dockerfile", b)
+
+					fmt.Printf("Copying dependencies...\n")
+					depdir, _ := osext.ExecutableFolder()
+					println(depdir)
+
+					err := sh.CopyTree(path.Join(depdir, "../src/github.com/jondot/armor/Godeps"), "Godeps", nil)
+					if err != nil {
+						fmt.Printf("Cannot copy dependencies: %s\n", err)
+						os.Exit(1)
+					}
+
 
 					fmt.Print(shellExec("git", "init"))
 					fmt.Print(shellExec("git", "add", "-A"))
