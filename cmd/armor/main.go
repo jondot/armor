@@ -33,8 +33,9 @@ func main() {
 					}
 					fmt.Printf("Created %s\n", app)
 
+					// setting up project. note: godeps will be fetched on
+					// user's first 'make', so no need to vendor for her here.
 					os.MkdirAll("config", 0755)
-
 					createWithTemplate(TEMPL_CONF, "config/development.yaml", b)
 					createWithTemplate(TEMPL_SERVICE, "main.go", b)
 					createWithTemplate(TEMPL_PROCFILE, "Procfile", b)
@@ -42,6 +43,7 @@ func main() {
 					createWithTemplate(TEMPL_DOCKER, "Dockerfile", b)
 					createWithTemplate(TEMPL_GITIGNORE, ".gitignore", b)
 
+					// git related
 					fmt.Print(shellExec("git", "init"))
 					fmt.Print(shellExec("git", "add", "-A"))
 					fmt.Print(shellExec("git", "commit", "-am", "first commit"))
