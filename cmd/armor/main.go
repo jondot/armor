@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"text/template"
-	"path"
 )
 
 type bucket struct {
