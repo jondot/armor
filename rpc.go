@@ -18,7 +18,7 @@ func newRPC(config *Config) *RPC {
 func (r *RPC) Run(rpcInit func(*grpc.Server)) {
 	runOn := fmt.Sprintf("%s:%s",
 		r.config.GetString("rpc.interface"),
-		r.config.GetStringNestedWithDefault("rpc.port", "46060"),
+		r.config.GetStringWithDefault("rpc.port", "46060"),
 	)
 
 	lis, err := net.Listen("tcp", runOn)

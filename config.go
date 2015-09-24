@@ -2,10 +2,12 @@ package armor
 
 import (
 	"fmt"
-	viper "github.com/jondot/viper" // my branch. see https://github.com/spf13/viper/pull/76/files
+	"github.com/olebedev/config"
+
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 )
 
 type Config struct {
@@ -14,68 +16,92 @@ type Config struct {
 	Product     string
 	Version     string
 	Sha         string
+	cfg         *config.Config
 }
 
-func (c *Config) All() interface{} {
-	return viper.AllSettings()
+func (c *Config) All() string {
+	r, err := config.RenderYaml(c.cfg)
+	if err != nil {
+		log.Fatalf("Cannot render configuration: %v", err)
+	}
+	return r
 }
 
-func (c *Config) Get(key string) interface{} {
-	return viper.Get(key)
+func (c *Config) Map(key string) map[string]interface{} {
+	return c.cfg.UMap(key)
 }
 
 func (c *Config) GetStringArray(key string) []string {
-	return viper.GetStringSlice(key)
+	list := c.cfg.UList(key)
+	new := make([]string, len(list))
+	for i, v := range list {
+		s, err := fmtString(v)
+		if err != nil {
+			log.Fatalf("Configuration: cannot get a string array for %s. Error: %s", err)
+		}
+		new[i] = s
+	}
+	return new
+}
+
+func fmtString(n interface{}) (string, error) {
+	switch n := n.(type) {
+	case bool, float64, int:
+		return fmt.Sprint(n), nil
+	case string:
+		return n, nil
+	}
+	return "", fmt.Errorf("expected this value to be convertible to string: %v")
 }
 
 func (c *Config) GetString(key string) string {
-	return viper.GetString(key)
+	return c.cfg.UString(key)
 }
 
-// viper has a bug which doesn't allow actual config to override nested default.
-func (c *Config) GetStringNestedWithDefault(key string, defval string) string {
-	v := viper.GetString(key)
-	if v != "" {
-		return v
-	}
-	return defval
+func (c *Config) GetStringWithDefault(key string, defval string) string {
+	return c.cfg.UString(key, defval)
 }
 
 func (c *Config) GetInt(key string) int {
-	return viper.GetInt(key)
+	return c.cfg.UInt(key)
 }
 
 func (c *Config) GetBool(key string) bool {
-	return viper.GetBool(key)
+	return c.cfg.UBool(key)
 }
 
 func (c *Config) Exists(key string) bool {
-	return viper.IsSet(key)
+	_, err := c.cfg.Get(key)
+	return err == nil
 }
 
 func newConfig(product string, ver string) *Config {
 	env := pickEnv("development", "GO_ENV", "RACK_ENV", "RAILS_ENV", "NODE_ENV")
-	viper.SetConfigName(env)       // name of config file (without extension)
-	viper.AddConfigPath("config/") // path to look for the config file in
-	viper.SetConfigType("yaml")
-	viper.SetEnvPrefix(product)
-	viper.AutomaticEnv()
-	viper.BindEnv("port", "PORT")
-	viper.SetDefault("port", "6060")
-	viper.SetDefault("interface", "")
-	viper.SetDefault("shafile", "REVISION")
-	viper.SetDefault("middleware", []string{"request_identification", "request_tracing", "route_metrics"})
 
-	host, _ := os.Hostname()
-	viper.SetDefault("host", host)
+	cfg, err := config.ParseYamlFile(path.Join("config", env+".yaml"))
 
-	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {
-		log.Fatalf("Cannot read configuration %v", err)
+		log.Fatalf("Cannot read configuration: %v", err)
 	}
 
-	host = viper.GetString("host")
-	sha := readSha()
+	cfg.Set("interface", cfg.UString("interface", ""))
+	cfg.Set("port", cfg.UString("port", "6060"))
+	cfg.Set("shafile", cfg.UString("shafile", "REVISION"))
+	cfg.Set("middleware",
+		cfg.UList("middleware",
+			[]interface{}{"request_identification", "request_tracing", "route_metrics"}))
+
+	host, _ := os.Hostname()
+	cfg.Set("host", cfg.UString("host", host))
+
+	host = cfg.UString("host")
+
+
+	// now override any of the defaults / configs with ENV
+	cfg = cfg.Env()
+
+
+	sha := readSha(cfg.UString("shafile"))
 
 	c := &Config{
 		Environment: env,
@@ -83,6 +109,7 @@ func newConfig(product string, ver string) *Config {
 		Product:     product,
 		Version:     ver,
 		Sha:         sha,
+		cfg:         cfg,
 	}
 	return c
 }
@@ -98,8 +125,7 @@ func pickEnv(defval string, opts ...string) string {
 	return defval
 }
 
-func readSha() string {
-	shafile := viper.GetString("shafile")
+func readSha(shafile string) string {
 	bytes, err := ioutil.ReadFile(shafile)
 	return conditionally(err == nil, fmt.Sprintf("%s", bytes), "no-rev").(string)
 }

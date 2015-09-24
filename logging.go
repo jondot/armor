@@ -28,14 +28,14 @@ type LogBuilder func(*Log)
 
 var LogMap = map[string]LogBuilder{
 	"log.console": func(lg *Log) {
-		lvl, err := logrus.ParseLevel(lg.config.GetStringNestedWithDefault("log.console.level", "debug"))
+		lvl, err := logrus.ParseLevel(lg.config.GetStringWithDefault("log.console.level", "debug"))
 		if err != nil {
 			log.Fatalf("Cannot understand log level: %s", err)
 		}
 		lg.Level = lvl
 
 		var formatter logrus.Formatter = new(logrus.JSONFormatter)
-		switch lg.config.GetStringNestedWithDefault("log.console.format", "json") {
+		switch lg.config.GetStringWithDefault("log.console.format", "json") {
 		case "text":
 			formatter = new(logrus.TextFormatter)
 		case "logstash":

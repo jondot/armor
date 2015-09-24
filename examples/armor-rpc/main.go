@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	pb "github.com/grpc/grpc-common/go/helloworld"
 	"github.com/jondot/armor"
+	pb "github.com/jondot/armor/examples/armor-rpc/helloworld"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"time"

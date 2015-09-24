@@ -21,7 +21,7 @@ func newMetrics(c *Config) *Metrics {
 		}
 	}
 
-	pref := c.GetStringNestedWithDefault("metrics.prefix", c.Environment)
+	pref := c.GetStringWithDefault("metrics.prefix", c.Environment)
 	metrics.NewGlobal(metrics.DefaultConfig(strings.Join([]string{pref, c.Product, "health"}, ".")), fan)
 	return &Metrics{
 		sink:   fan,

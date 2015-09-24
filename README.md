@@ -64,7 +64,7 @@ and providing enough headroom to work in a non-ideal infrastructure.
   - [x] Route metrics
 - Operational
   - [x] Log: logrus
-  - [x] Config: spf13/viper
+  - [x] Config: olebedev/config
   - [x] Metrics: armon/go-metrics
 
 #### v2.0
